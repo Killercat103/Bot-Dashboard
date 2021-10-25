@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Config - Sensitive data.
+wwwroot/Host-Configuration/Config
