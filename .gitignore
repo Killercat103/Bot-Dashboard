@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Config file (Contains sensitive info).
-wwwroot/Host-Configuration/Config
+Host-Configuration/Config
