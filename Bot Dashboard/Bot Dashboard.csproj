@@ -8,10 +8,6 @@
 </PropertyGroup>
 
 <ItemGroup>
-  <Content Include="Host_Configuration\Config.toml" />
-</ItemGroup>
-
-<ItemGroup>
   <PackageReference Include="dsharpplus" Version="4.1.0" />
   <PackageReference Include="tommy" Version="3.0.1" />
 </ItemGroup>
