@@ -19,7 +19,9 @@ public partial class Program
 
 		for (int i = 0; i < botTokenChar.Length; ++i)
 		{
-			encryptedBotToken += --botTokenChar[i];
+			for (int j = 1; j <= i; ++j)
+				++botTokenChar[i];
+			encryptedBotToken += botTokenChar[i];
 		}
 
 		using (StreamWriter writer = File.CreateText("Host_Configuration/Config.toml"))
@@ -55,7 +57,9 @@ public partial class Program
 
 			for (int i = 0; i < botTokenChar.Length; ++i)
 			{
-				botToken += ++botTokenChar[i];
+				for (int j = 1; j <= i; ++j)
+					--botTokenChar[i];
+				botToken += botTokenChar[i];
 			}
 		}
 		catch (FileNotFoundException)
