@@ -1,8 +1,11 @@
 ﻿using DSharpPlus;
 using Tommy;
 
-public partial class Program
+
+// Connecting to the Discord Bot.
+public partial class BotStartup
 {
+	// Function to create a TOML configuration file if the latter one was invalid.
 	private static string CreateNewConfig()
 	{
 		string? botToken;
@@ -17,6 +20,7 @@ public partial class Program
 		char[] botTokenChar = botToken.ToCharArray();
 		string encryptedBotToken = "";
 
+		// Insecure encryption method.
 		for (int i = 0; i < botTokenChar.Length; ++i)
 		{
 			for (int j = 1; j <= i; ++j)
@@ -39,6 +43,7 @@ public partial class Program
 
 	public static async Task MainAsync()
 	{
+		// Attempts to read the TOML configuration file.
 		string botToken = "";
 		try
 		{
@@ -52,6 +57,7 @@ public partial class Program
 				throw new TomlSyntaxException("Token not found", TOMLParser.ParseState.Table, 1, 1);
 			}
 
+			// Insecure decryption method.
 			char[] botTokenChar = botToken.ToCharArray();
 			botToken = "";
 
@@ -80,14 +86,22 @@ public partial class Program
 		});
 
 		await discord.ConnectAsync();
+
+		/* I'm gonna need this later probably.
+		DSharpPlus.Entities.DiscordGuild guild = await discord.GetGuildAsync(878193265424343060L);
+		DSharpPlus.Entities.DiscordChannel channel = guild.GetChannel(878340382319079475L);
+
+		await discord.SendMessageAsync(channel, "Hello world!"); */
 	}
 }
 
+// Startup class needed to connect to the Discord bot
 class Startup
 {
 	public Startup(IConfiguration configuration)
 	{
-		Program.MainAsync().GetAwaiter().GetResult();
+		BotStartup.MainAsync().GetAwaiter().GetResult();
+
 		Configuration = configuration;
 	}
 
