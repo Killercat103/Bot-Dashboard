@@ -1,121 +1,128 @@
 ﻿using DSharpPlus;
 using Tommy;
 
-
-// Connecting to the Discord Bot.
-public partial class BotStartup
+namespace Bot_Dashboard
 {
-	// Function to create a TOML configuration file if the latter one was invalid.
-	private static string CreateNewConfig()
+	// Connecting to the Discord Bot.
+	public partial class BotStartup
 	{
-		string? botToken;
-		do
+		// Function to create a TOML configuration file if the latter one was invalid.
+		private static string CreateNewConfig()
 		{
-			Console.WriteLine("Please provide Discord bot token.");
-			botToken = Console.ReadLine();
-		}
-		while
-			(String.IsNullOrEmpty(botToken));
-
-		char[] botTokenChar = botToken.ToCharArray();
-		string encryptedBotToken = "";
-
-		// Insecure encryption method.
-		for (int i = 0; i < botTokenChar.Length; ++i)
-		{
-			for (int j = 1; j <= i; ++j)
-				++botTokenChar[i];
-			encryptedBotToken += botTokenChar[i];
-		}
-
-		using (StreamWriter writer = File.CreateText("Host_Configuration/Config.toml"))
-		{
-			TomlTable table = new()
+			string? botToken;
+			do
 			{
-				["EncryptedBotToken"] = encryptedBotToken
-			};
-			table.WriteTo(writer);
-			writer.Flush();
-		}
-
-		return botToken;
-	}
-
-	public static async Task MainAsync()
-	{
-		// Attempts to read the TOML configuration file.
-		string botToken = "";
-		try
-		{
-			using StreamReader reader = File.OpenText("Host_Configuration/Config.toml");
-			TomlTable table = TOML.Parse(reader);
-
-			botToken = table["EncryptedBotToken"];
-
-			if (String.IsNullOrEmpty(botToken) || botToken == "Tommy.TomlLazy")
-			{
-				throw new TomlSyntaxException("Token not found", TOMLParser.ParseState.Table, 1, 1);
+				Console.WriteLine("Please provide Discord bot token.");
+				botToken = Console.ReadLine();
 			}
+			while
+				(string.IsNullOrEmpty(botToken));
 
-			// Insecure decryption method.
 			char[] botTokenChar = botToken.ToCharArray();
-			botToken = "";
+			string encryptedBotToken = "";
 
+			// Insecure encryption method.
 			for (int i = 0; i < botTokenChar.Length; ++i)
 			{
 				for (int j = 1; j <= i; ++j)
-					--botTokenChar[i];
-				botToken += botTokenChar[i];
+					++botTokenChar[i];
+				encryptedBotToken += botTokenChar[i];
 			}
+
+			using (StreamWriter writer = File.CreateText("Host_Configuration/Config.toml"))
+			{
+				TomlTable table = new()
+				{
+
+					["EncryptedBotToken"] = new TomlString
+					{
+						Value = encryptedBotToken,
+						Comment = "Token affiliated with the hosted Discord bot."
+					},
+				};
+				table.WriteTo(writer);
+				writer.Flush();
+			}
+
+			return botToken;
 		}
-		catch (FileNotFoundException)
+
+		public static async Task MainAsync()
 		{
-			Console.WriteLine("Configuration file not found...");
-			botToken = CreateNewConfig();
+			// Attempts to read the TOML configuration file.
+			string botToken = "";
+			try
+			{
+				using StreamReader reader = File.OpenText("Host_Configuration/Config.toml");
+				TomlTable table = TOML.Parse(reader);
+
+				botToken = table["EncryptedBotToken"];
+
+				if (string.IsNullOrEmpty(botToken) || botToken == "Tommy.TomlLazy")
+				{
+					throw new TomlSyntaxException("Token not found", TOMLParser.ParseState.Table, 1, 1);
+				}
+
+				// Insecure decryption method.
+				char[] botTokenChar = botToken.ToCharArray();
+				botToken = "";
+
+				for (int i = 0; i < botTokenChar.Length; ++i)
+				{
+					for (int j = 1; j <= i; ++j)
+						--botTokenChar[i];
+					botToken += botTokenChar[i];
+				}
+			}
+			catch (FileNotFoundException)
+			{
+				Console.WriteLine("Configuration file not found...");
+				botToken = CreateNewConfig();
+			}
+			catch (TomlSyntaxException)
+			{
+				Console.WriteLine("Configuration file missing arguments or improperly formated...");
+				botToken = CreateNewConfig();
+			}
+
+			DiscordClient? discord = new(new DiscordConfiguration()
+			{
+				Token = botToken,
+				TokenType = TokenType.Bot
+			});
+
+			await discord.ConnectAsync();
+
+			/* I'm gonna need this later probably.
+			DSharpPlus.Entities.DiscordGuild guild = await discord.GetGuildAsync(878193265424343060L);
+			DSharpPlus.Entities.DiscordChannel channel = guild.GetChannel(878340382319079475L);
+
+			await discord.SendMessageAsync(channel, "Hello world!"); */
 		}
-		catch (TomlSyntaxException)
+	}
+
+	// Startup class needed to connect to the Discord bot
+	class Startup
+	{
+		public Startup(IConfiguration configuration)
 		{
-			Console.WriteLine("Configuration file missing arguments or improperly formated...");
-			botToken = CreateNewConfig();
+			BotStartup.MainAsync().GetAwaiter().GetResult();
+
+			Configuration = configuration;
 		}
 
-		var discord = new DiscordClient(new DiscordConfiguration()
+		public IConfiguration Configuration { get; }
+
+		public void ConfigureServices(IServiceCollection services)
 		{
-			Token = botToken,
-			TokenType = TokenType.Bot
-		});
-
-		await discord.ConnectAsync();
-
-		/* I'm gonna need this later probably.
-		DSharpPlus.Entities.DiscordGuild guild = await discord.GetGuildAsync(878193265424343060L);
-		DSharpPlus.Entities.DiscordChannel channel = guild.GetChannel(878340382319079475L);
-
-		await discord.SendMessageAsync(channel, "Hello world!"); */
-	}
-}
-
-// Startup class needed to connect to the Discord bot
-class Startup
-{
-	public Startup(IConfiguration configuration)
-	{
-		BotStartup.MainAsync().GetAwaiter().GetResult();
-
-		Configuration = configuration;
-	}
-
-	public IConfiguration Configuration { get; }
-
-	public void ConfigureServices(IServiceCollection services)
-	{
-		services.AddRazorPages();
-		services.AddAuthorization();
-	}
+			services.AddRazorPages();
+			services.AddAuthorization();
+		}
 
 
-	public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
-	{
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
+		{
 
+		}
 	}
 }
