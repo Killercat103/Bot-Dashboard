@@ -29,7 +29,7 @@ namespace Bot_Dashboard
 				encryptedBotToken += botTokenChar[i];
 			}
 
-			using (StreamWriter writer = File.CreateText("Host_Configuration/Config.toml"))
+			using (StreamWriter writer = File.CreateText("Config.toml"))
 			{
 				TomlTable table = new()
 				{
@@ -53,7 +53,7 @@ namespace Bot_Dashboard
 			string botToken = "";
 			try
 			{
-				using StreamReader reader = File.OpenText("Host_Configuration/Config.toml");
+				using StreamReader reader = File.OpenText("Config.toml");
 				TomlTable table = TOML.Parse(reader);
 
 				botToken = table["EncryptedBotToken"];
