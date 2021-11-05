@@ -1,2 +1,10 @@
-# Token affiliated with the hosted Discord bot.
+[Discord]
+ClientID = ""
 EncryptedBotToken = ""
+EncryptedClientSecret = ""
+
+[Jwt]
+Audience = "https://example.com/"
+# Random string to use as a encryption key. (Recommended to use a random password generator with 128 characters.)
+EncryptionKey = ""
+Issuer = "https://example.com/"
