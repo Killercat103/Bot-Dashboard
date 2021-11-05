@@ -4,4 +4,10 @@
 
 <h1>Welcome to the frontpage!</h1>
 <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-<a href="https://discord.com/oauth2/authorize?client_id=788677199753642005&scope=identify%20guilds&redirect_uri=https%3A%2F%2F127.0.0.1%3A7251%2FUsers%2FLogin&response_type=code&scope=identify%20guilds">How do i do this shit?</a>
+<link rel="stylesheet" type="text/css" href="/css/Comment_section.css" />
+
+<section>
+	<p v-for="items in item" v-text="items"></p>
+	<textarea type="text" class="input" placeholder="Write a comment" v-model="newItem" keyup.enter="addItem()"></textarea>
+	<br/><button v-on:click="addItem()" class='primaryContained float-right' type="submit">Add Comment</button>
+</section>
