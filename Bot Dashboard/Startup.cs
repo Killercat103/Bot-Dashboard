@@ -1,4 +1,7 @@
 ﻿using DSharpPlus;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.Text;
 using Tommy;
 
 namespace Bot_Dashboard
@@ -115,14 +118,71 @@ namespace Bot_Dashboard
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.AddControllersWithViews();
 			services.AddRazorPages();
-			services.AddAuthorization();
+			services.AddAuthentication(options =>
+			{
+				options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+				options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultSignInScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+			})
+			.AddCookie()
+			.AddJwtBearer(options =>
+			{
+				options.TokenValidationParameters = new()
+				{
+					ValidateIssuer = false,
+					ValidateAudience = false,
+					ValidateIssuerSigningKey = true,
+					ValidIssuer = Configuration.GetValue<string>("Jwt:Issuer"),
+					ValidAudience = Configuration.GetValue<string>("Jwt:Audience"),
+					IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("Jwt:EncryptionKey")))
+				};
+			})
+			.AddOAuth("Discord",
+				options => 
+				{
+					options.AuthorizationEndpoint = "https://discord.com/api/oauth2/authorize";
+					options.Scope.Add("identify");
+					options.Scope.Add("guilds");
+
+					options.CallbackPath = new PathString("/Auth/OAuthCallback");
+
+					options.ClientId = Configuration.GetValue<string>("Discord:ClientID");
+					options.ClientSecret = Configuration.GetValue<string>("Discord:ClientSecret");
+
+					options.TokenEndpoint = "https://discord.com/api/oauth2/token";
+					options.UserInformationEndpoint = "https://discord.com/api/users/@me";
+
+					options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
+					options.ClaimActions.MapJsonKey(ClaimTypes.Name, "username");
+
+					options.AccessDeniedPath = "/Users/DiscordAuthFailed";
+
+					options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+					{
+						OnCreatingTicket = async context =>
+						{
+							HttpRequestMessage request = new(HttpMethod.Get, context.Options.UserInformationEndpoint);
+							request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+							request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", context.AccessToken);
+						
+							HttpResponseMessage? response = await context.Backchannel.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, context.HttpContext.RequestAborted);
+							response.EnsureSuccessStatusCode();
+
+							System.Text.Json.JsonElement user = System.Text.Json.JsonDocument.Parse(await response.Content.ReadAsStringAsync()).RootElement;
+
+							context.RunClaimActions(user);
+						}
+					};
+				}
+			);
 		}
 
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
 		{
-
+			app.UseAuthentication();
 		}
 	}
 }
