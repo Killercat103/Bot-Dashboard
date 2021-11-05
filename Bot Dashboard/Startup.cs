@@ -25,7 +25,7 @@ namespace Bot_Dashboard
 
 			DiscordClient? discord = new(new DiscordConfiguration()
 			{
-				Token = hostConfig["Discord"]["EncryptedBotToken"],
+				Token = encryptedBotToken,
 				TokenType = TokenType.Bot
 			});
 
@@ -71,9 +71,9 @@ namespace Bot_Dashboard
 						++valueCharArray[i];
 					encryptedString += valueCharArray[i];
 				}
-				return value;
+				return encryptedString;
 			}
-			if (RequestConfigParameter("\nWould you like to create a new configuration file?").ToLower() == "n")
+			if (RequestConfigParameter("\nWould you like to create a new configuration file? (Y/N)").ToLower() == "n")
 				Environment.Exit(-1);
 			using StreamWriter writer = File.CreateText("Config.toml");
 			TomlTable newHostConfig = new()
