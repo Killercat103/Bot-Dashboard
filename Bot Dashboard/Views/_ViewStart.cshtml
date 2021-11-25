@@ -1,3 +1,47 @@
 ﻿@{
-	Layout = "_Layout";
+	@functions {
+		protected class ClientUser
+		{
+			public string? Access_Token { get; set; }
+			public long ID { get; set; }
+			public string? Username { get; set; }
+			public string? Discriminator { get; set; }
+			public string? Avatar { get; set; }
+		}
+	}
+
+	string? sessiontoken = Context.Session.GetString("Discord.Session");
+	ClientUser? clientUser;
+
+	if (string.IsNullOrEmpty(sessiontoken))
+	{
+		ViewData["SignedIn"] = null;
+
+		ViewData["User_ID"] = 0L;
+		ViewData["Username"] = "Sign in";
+	}
+	else
+	{
+		ViewData["SignedIn"] = true;
+		clientUser = JsonConvert.DeserializeObject<ClientUser>(sessiontoken);
+
+		ViewData["Access_Token"] = clientUser?.Access_Token;
+		ViewData["User_ID"] = clientUser?.ID;
+		ViewData["Username"] = clientUser?.Username;
+		ViewData["User_Discriminator"] = clientUser?.Discriminator;
+		ViewData["User_Avatar"] = clientUser?.Avatar;
+	}
+
+
+
+	string? routeURL = ViewContext?.RouteData?.Values["controller"]?.ToString();
+
+	if (routeURL != null && routeURL.Contains("Dashboard"))
+	{
+		Layout = "_DashboardLayout";
+	}
+	else
+	{
+		Layout = "_Layout";
+	}
 }
