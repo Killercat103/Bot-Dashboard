@@ -9,7 +9,8 @@
 
 <ItemGroup>
 	<PackageReference Include="dsharpplus" Version="4.1.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.11" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+	<PackageReference Include="RestSharp" Version="106.13.0" />
 	<PackageReference Include="tommy" Version="3.0.1" />
 </ItemGroup>
 
