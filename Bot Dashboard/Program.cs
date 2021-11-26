@@ -1,8 +1,13 @@
 using Bot_Dashboard;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using System;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 Startup? startup = new(builder.Configuration);
+
+startup.WebHost(builder.WebHost);
 
 startup.ConfigureServices(builder.Services);
 
@@ -18,6 +23,17 @@ if (!app.Environment.IsDevelopment())
 	app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+	await next();
+	if (context.Response.StatusCode == 404)
+	{
+		string url = context.Request.Path;
+		context.Request.Path = "/Exception/URL404";
+		context.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?url=\"" + url + "\"");
+		await next();
+	}
+});
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
