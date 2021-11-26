@@ -1,0 +1,16 @@
+{
+	"name": "Bot Dashboard (PWA)",
+	"short_name": "BotDSH PWA",
+	"description": "Progressive Web App for administrating \".NETBot\" on Discord.",
+	"icons": [
+		{
+			"sizes": "768x768",
+			"src": "~/Media/Images/Icons/NET_Core_Logo.png",
+			"type": "image/png"
+		}
+	],
+	"start_url": "/Home/Index",
+	"display": "fullscreen",
+	"theme_color": "#1915ef",
+	"background_color": "#151518"
+}
