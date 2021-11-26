@@ -1,4 +1,129 @@
-body {
-	background-color: #252525;
-	color: #ffffff;
+body
+{
+	background-color: #151518;
+	color: #eeeeee;
+	display: block;
+	font-family: sans-serif, "Times New Roman";
+	margin: 0;
 }
+
+header
+{
+	background-color: #282828;
+	box-shadow: 0 5px 7px 0 #000000AA;
+	display: flex;
+	margin-bottom: 35px;
+	text-shadow: 1.5px 1.5px 1.5px #000000;
+}
+
+nav
+{
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 200%;
+	width: 90%;
+}
+
+nav > h1
+{
+	background-color: #353535;
+	border: 0 solid #00000090;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+	margin: 0;
+	padding: 1px 0 0 5px;
+	width: 300px;
+}
+
+nav > a:link, nav > a:visited
+{
+	background-color: #353535;
+	border: 0 solid #00000090;
+	border-bottom-width: 1px;
+	border-right-width: 1px;
+	color: #eeeeee;
+	padding: 15px 20px;
+	text-decoration: none;
+}
+
+nav > a:hover
+{
+	box-shadow: 0 0 10px 0 #000000;
+	color: #8080ff;
+	z-index: 1;
+}
+
+nav > a:active, .userprofile:active { color: #FFFACF; }
+
+.userprofile:link, .userprofile:visited {
+	background-color: #353535;
+	border: 0 solid #00000090;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	color: #eeeeee;
+	padding: 3px;
+	text-align: center;
+	text-decoration: none;
+	width: 10%;
+}
+
+.userprofile > img
+{
+	border-radius: 50%;
+	margin-bottom: -4px;
+}
+
+.currentpage, .currentpage:visited {
+	background-color: #252525;
+	color: #808080;
+}
+
+a:link { color: #3639bf; }
+
+a:visited { color: #62e19e; }
+
+a:hover { color: #8080ff; }
+
+a:active { color: #fffacf; }
+
+main
+{
+	background-color: #202020;
+	box-shadow: 5px 5px 7px 0 #000000AA;
+	margin-bottom: 50px;
+}
+
+footer
+{
+	background-color: #101010;
+	box-shadow: 0 0 7px 2px #000000AA;
+	padding: 10px;
+}
+
+
+
+.guildlist
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.guildlist > div
+{
+	text-align: center;
+	height: 150px;
+	width: 120px;
+}
+
+.guildlist > div > a:link, .guildlist > div > a:visited
+{
+	color: #eeeeee;
+	text-decoration: none;
+}
+
+.guildlist > div > a > img
+{
+    border-radius: 50%;
+}
+
+.unusedserver { filter: grayscale(100%); }
