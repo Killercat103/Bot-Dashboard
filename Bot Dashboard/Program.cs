@@ -7,13 +7,15 @@ WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 Startup? startup = new(builder.Configuration);
 
-startup.WebHost(builder.WebHost);
+BotStartup.ConnectToDiscord().GetAwaiter().GetResult();
 
-startup.ConfigureServices(builder.Services);
+global::Bot_Dashboard.Startup.WebHost(builder.WebHost);
+
+global::Bot_Dashboard.Startup.ConfigureServices(builder.Services);
 
 WebApplication? app = builder.Build();
 
-startup.Configure(app, app.Environment);
+global::Bot_Dashboard.Startup.Configure(app, app.Environment);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

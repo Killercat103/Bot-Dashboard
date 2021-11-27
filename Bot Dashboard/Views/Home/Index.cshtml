@@ -1,9 +1,22 @@
 ﻿@{
-	ViewData["Title"] = "Home Page";
+	ViewData["Title"] = HostConfig.HostName;
 }
 
+<div class="frontpagebanner">
+	@{
+		if (ViewData["SignedIn"] == null)
+		{
+			<h1>Welcome to @HostConfig.HostName's Dashboard!</h1>
+		}
+		else
+		{
+			<h1>Welcome Back, @ViewData["Username"]!</h1>
+		}
+	}
+</div>
+
 <h1>Welcome to the frontpage!</h1>
-<p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
 <link rel="stylesheet" type="text/css" href="/css/Comment_section.css" />
 
 <section>

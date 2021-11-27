@@ -5,7 +5,8 @@ namespace Bot_Dashboard
 {
 	public class HostConfig
 	{
-		public static string? HostURL { get; set; }
+		public static string? LocalURL { get; set; }
+		public static string? HostName { get; set; }
 
 		public static class Discord
 		{
@@ -24,7 +25,7 @@ namespace Bot_Dashboard
 	// Connecting to the Discord Bot.
 	public class BotStartup
 	{
-		public static async Task MainAsync()
+		public static async Task ConnectToDiscord()
 		{
 			DiscordClient? discord = new(new DiscordConfiguration()
 			{
@@ -142,22 +143,25 @@ namespace Bot_Dashboard
 				decryptedClientSecret += clientSecretCharArray[i];
 			}
 
-			HostConfig.HostURL = hostConfig["HostURL"];
+			IList<long> admins = new List<long>();
+			for (int i = 0; i < hostConfig["Discord"]["Administrators"].ChildrenCount; ++i)
+			{
+				admins.Add(hostConfig["Discord"]["Administrators"][i]);
+			}
+
+			HostConfig.LocalURL = hostConfig["LocalURL"];
+			HostConfig.HostName = hostConfig["HostName"];
 			HostConfig.Discord.ClientID = hostConfig["Discord"]["ClientID"];
 			HostConfig.Discord.BotToken = decryptedBotToken;
 			HostConfig.Discord.ClientSecret = decryptedClientSecret;
-			HostConfig.Discord.Admins = new long[1L];
-
-
-
-			BotStartup.MainAsync().GetAwaiter().GetResult();
+			HostConfig.Discord.Admins = admins.ToArray();
 
 			Configuration = configuration;
 		}
 
 		public IConfiguration Configuration { get; }
 
-		public void ConfigureServices(IServiceCollection services)
+		public static void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllersWithViews();
 			services.AddRazorPages();
@@ -170,12 +174,12 @@ namespace Bot_Dashboard
 			});
 		}
 
-		public void WebHost(ConfigureWebHostBuilder builder)
+		public static void WebHost(ConfigureWebHostBuilder builder)
 		{
-			builder.UseUrls(hostConfig["HostURL"]);
+			if (HostConfig.LocalURL != null) { builder.UseUrls(HostConfig.LocalURL); }
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
+		public static void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
 		{
 			app.UseSession();
 			app.UseAuthentication();
