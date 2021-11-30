@@ -161,7 +161,7 @@ namespace Bot_Dashboard
 
 		public IConfiguration Configuration { get; }
 
-		public static void ConfigureServices(IServiceCollection services)
+		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllersWithViews();
 			services.AddRazorPages();
@@ -174,15 +174,24 @@ namespace Bot_Dashboard
 			});
 		}
 
-		public static void WebHost(ConfigureWebHostBuilder builder)
+		public void WebHost(ConfigureWebHostBuilder builder)
 		{
 			if (HostConfig.LocalURL != null) { builder.UseUrls(HostConfig.LocalURL); }
 		}
 
-		public static void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
+
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
 		{
 			app.UseSession();
 			app.UseAuthentication();
+			app.UseStaticFiles(new StaticFileOptions
+			{
+				FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+				Path.Combine(Directory.GetCurrentDirectory())),
+				RequestPath = "/wwwroot"
+			});
+
+			environment.ApplicationName = HostConfig.HostName;
 		}
 	}
 }

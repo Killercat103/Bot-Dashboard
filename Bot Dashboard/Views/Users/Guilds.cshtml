@@ -45,7 +45,7 @@
 					@{
 						if (client.Guilds.ContainsKey((ulong)guild.ID))
 						{
-							<a asp-controller="Dashboard" asp-action="Index" asp-route-guildID="@guild.ID" >
+							<a asp-controller="Dashboard" asp-route-guildID="@guild.ID" asp-action="Index" >
 								<img src="@serverIconURL" height="100" width="100" alt="Server Icon" />
 								<br/>@guilds[i].Name
 							</a>

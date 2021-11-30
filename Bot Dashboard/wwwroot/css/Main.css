@@ -1,9 +1,16 @@
+html
+{
+	height: 100%;
+}
+
+
 body
 {
 	background-color: #151518;
 	color: #eeeeee;
 	display: block;
 	font-family: sans-serif, "Times New Roman";
+	height: 100%;
 	margin: 0;
 }
 

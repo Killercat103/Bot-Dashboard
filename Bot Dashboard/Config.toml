@@ -1,7 +1,8 @@
-HostURL = "https://0.0.0.0:443;http://0.0.0.0:80"
+LocalURL = "https://0.0.0.0:443;http://0.0.0.0:80"
+HostName = ".NETBot"
 
 [Discord]
-ClientID = ""
-EncryptedBotToken = ""
-EncryptedClientSecret = ""
-Administrators = []
+ClientID = "788677199753642005"
+EncryptedBotToken = "N{i7Roi:U]u@Zc^{caYWHFqSIQoMqX}hsqs^` ` n"
+EncryptedClientSecret = "HJ\\R6r_Wuq^T?^tVAwG^`q\u007FIOg`"
+Administrators = [527870782743773184]

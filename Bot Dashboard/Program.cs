@@ -1,7 +1,4 @@
 using Bot_Dashboard;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
-using System;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +6,13 @@ Startup? startup = new(builder.Configuration);
 
 BotStartup.ConnectToDiscord().GetAwaiter().GetResult();
 
-global::Bot_Dashboard.Startup.WebHost(builder.WebHost);
+startup.WebHost(builder.WebHost);
 
-global::Bot_Dashboard.Startup.ConfigureServices(builder.Services);
+startup.ConfigureServices(builder.Services);
 
 WebApplication? app = builder.Build();
 
-global::Bot_Dashboard.Startup.Configure(app, app.Environment);
+startup.Configure(app, app.Environment);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -28,12 +25,20 @@ if (!app.Environment.IsDevelopment())
 app.Use(async (context, next) =>
 {
 	await next();
-	if (context.Response.StatusCode == 404)
+
+	switch (context.Response.StatusCode)
 	{
-		string url = context.Request.Path;
-		context.Request.Path = "/Exception/URL404";
-		context.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?url=\"" + url + "\"");
-		await next();
+		case 404:
+			string url = context.Request.Path;
+			context.Request.Path = "/Exception/URL404";
+			context.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?url=\"" + url + "\"");
+			await next();
+			break;
+
+		case 403:
+			context.Request.Path = "/Exception/Forbidden";
+			await next();
+			break;
 	}
 });
 app.UseHttpsRedirection();
@@ -44,7 +49,15 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+	name: "dashboard",
+	pattern: "/Dashboard/{guildID}/{action=Index}",
+	defaults: new { controller = "Dashboard", action = "Index", }
+);
+
+app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+	pattern: "{controller=Home}/{action=Index}/{id?}",
+	defaults: new { controller = "Home", action = "Index", }
+);
 
 app.Run();
