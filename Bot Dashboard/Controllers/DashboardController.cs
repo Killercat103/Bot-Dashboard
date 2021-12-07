@@ -107,7 +107,7 @@ namespace Bot_Dashboard.Controllers
 				Response.StatusCode = guildAccessStatusCode;
 				return RedirectToAction("Index", "Exception", new
 				{
-					id = guildAccessStatusCode
+					httpstatus = guildAccessStatusCode
 				});
 			}
 			return View();

@@ -32,7 +32,7 @@ namespace Bot_Dashboard.Controllers
 			if (string.IsNullOrEmpty(discordSession))
 			{
 				Response.StatusCode = 403;
-				return RedirectToAction("Index", "Exception", new { id = 403 } );
+				return RedirectToAction("Index", "Exception", new { httpstatus = 403 } );
 			}
 
 			ClientUser? user = JsonConvert.DeserializeObject<ClientUser>(discordSession);
