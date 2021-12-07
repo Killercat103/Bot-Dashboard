@@ -21,7 +21,11 @@ namespace Bot_Dashboard.Controllers
 
 		public IActionResult Index()
 		{
-			if (string.IsNullOrEmpty(HttpContext.Session.GetString("Discord.Session"))) { return RedirectToAction("Login", "OAuth2"); }
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString("Discord.Session")))
+			{
+				Response.StatusCode = 401;
+				return RedirectToAction("Index", "Exception", new { httpStatus = 401 });
+			}
 			else { return View(); }
 		}
 
@@ -31,8 +35,8 @@ namespace Bot_Dashboard.Controllers
 
 			if (string.IsNullOrEmpty(discordSession))
 			{
-				Response.StatusCode = 403;
-				return RedirectToAction("Index", "Exception", new { httpstatus = 403 } );
+				Response.StatusCode = 401;
+				return RedirectToAction("Index", "Exception", new { httpStatus = 401 } );
 			}
 
 			ClientUser? user = JsonConvert.DeserializeObject<ClientUser>(discordSession);
@@ -51,7 +55,10 @@ namespace Bot_Dashboard.Controllers
 				Thread.Sleep(i * 500);
 				response = restClient.Get(restRequest);
 			}
-			if (response.StatusCode == HttpStatusCode.TooManyRequests) { return StatusCode(429); }
+			if (response.StatusCode == HttpStatusCode.TooManyRequests) {
+				Response.StatusCode = 429;
+				return RedirectToAction("Index", "Exception", new { httpStatus = 429 });
+			}
 
 			IList<Guild>? allGuilds = JsonConvert.DeserializeObject<List<Guild>>(response.Content);
 

@@ -4,13 +4,14 @@ namespace Bot_Dashboard.Controllers
 {
 	public class ExceptionController : Controller
 	{
-		public IActionResult Index(int httpstatus = 500)
+		public IActionResult Index(int httpStatus = 500)
 		{
-			return httpstatus switch
+			return httpStatus switch
 			{
 				401 => RedirectToAction("Login", "OAuth2"),
 				403 => RedirectToAction("Forbidden", "Exception"),
 				404 => RedirectToAction("NotFound", "Exception"),
+				429 => RedirectToAction("TooManyRequests", "Exception"),
 				_ => View()
 			};
 		}

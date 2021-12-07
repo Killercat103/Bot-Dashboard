@@ -92,7 +92,7 @@ namespace Bot_Dashboard.Controllers
 				Response.StatusCode = guildAccessStatusCode;
 				return RedirectToAction("Index", "Exception", new
 				{
-					id = guildAccessStatusCode
+					httpStatus = guildAccessStatusCode
 				});
 			}
 
@@ -107,7 +107,7 @@ namespace Bot_Dashboard.Controllers
 				Response.StatusCode = guildAccessStatusCode;
 				return RedirectToAction("Index", "Exception", new
 				{
-					httpstatus = guildAccessStatusCode
+					httpStatus = guildAccessStatusCode
 				});
 			}
 			return View();
@@ -129,7 +129,7 @@ namespace Bot_Dashboard.Controllers
 				Response.StatusCode = guildAccessStatusCode;
 				return RedirectToAction("Index", "Exception", new
 				{
-					id = guildAccessStatusCode
+					httpStatus = guildAccessStatusCode
 				});
 			}
 
