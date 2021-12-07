@@ -79,7 +79,7 @@ namespace Bot_Dashboard
 			using StreamWriter writer = File.CreateText("Config.toml");
 			TomlTable newHostConfig = new()
 			{
-				["HostName"] = RequestConfigParameter("\nPlease insert "),
+				["HostName"] = RequestConfigParameter("\nPlease insert application's name."),
 				["LocalURL"] = RequestConfigParameter("\nPlease insert application's locally hosted URL. (Example: https://0.0.0.0:443;http://0.0.0.0:80)"),
 				["Discord"] =
 					{
