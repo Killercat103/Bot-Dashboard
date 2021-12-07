@@ -1,8 +1,13 @@
 ﻿@{
 	ViewData["Title"] = HostConfig.HostName;
+
+	@section Styles
+	{
+		<link rel="stylesheet" href="~/CSS/Banner.css" />
+	}
 }
 
-<div class="frontpagebanner">
+<div class="banner">
 	@{
 		if (ViewData["SignedIn"] == null)
 		{
@@ -14,13 +19,6 @@
 		}
 	}
 </div>
-
-<h1>Welcome to the frontpage!</h1>
-
-<link rel="stylesheet" type="text/css" href="~/CSS/Comment_section.css" />
-
-<section>
-	<p v-for="items in item" v-text="items"></p>
-	<textarea type="text" class="input" placeholder="Write a comment" v-model="newItem" keyup.enter="addItem()"></textarea>
-	<br/><button v-on:click="addItem()" class='primaryContained float-right' type="submit">Add Comment</button>
-</section>
+<div class="maincolumn">
+	<h1>Welcome to the frontpage!</h1>
+</div>

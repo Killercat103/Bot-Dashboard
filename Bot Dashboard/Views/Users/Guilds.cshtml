@@ -1,73 +1,62 @@
-﻿@using DSharpPlus;
-@{
+﻿@{
 	ViewData["Title"] = "Guilds";
 
-	@functions {
-		public class Guild
-		{
-			public long ID { get; set; }
-			public string? Name { get; set; }
-			public string? Icon { get; set; }
-			public bool Owner { get; set; }
-			public long Permissions { get; set; }
-		}
-	}
+	@using Bot_Dashboard.Controllers
+	@using DSharpPlus;
 
-	string? guildsJSON = (string?)ViewData["Guilds"];
-	IList<Guild>? guilds = null;
+	@section Styles { <link rel="stylesheet" href="~/CSS/Guilds.css" /> }
 
-	if (!string.IsNullOrEmpty(guildsJSON))
-	{
-		guilds = JsonConvert.DeserializeObject<List<Guild>>(guildsJSON);
-	}
+
+	IList<UsersController.Guild>? guilds = (IList<UsersController.Guild>?)ViewData["Guilds"];
+
 }
-
-<div class="guildlist">
-	@{
-		if (guilds != null)
-		{
-			guilds = guilds.OrderBy(guilds => guilds.Name).ToList<Guild>();
-
-			for (int i = 0; i < guilds.Count(); ++i)
+<div class="maincolumn">
+	<div class="guildlist">
+		@{
+			if (guilds != null)
 			{
+				guilds = guilds.OrderBy(guilds => guilds.Name).ToList<UsersController.Guild>();
 
-				Guild? guild = guilds[i];
 
-				DiscordClient? client = DiscordConnection.Client;
+				for (int i = 0; i < guilds.Count(); ++i)
+				{
 
-				if (client == null) { throw new Exception("Client missing value!"); }
+					UsersController.Guild? guild = guilds[i];
 
-				string serverIconURL = "https://cdn.discordapp.com/icons/" +
-					guild.ID +
-					'/' + guild.Icon;
+					DiscordClient? client = DiscordConnection.Client;
 
-				<div>
-					@{
-						if (client.Guilds.ContainsKey((ulong)guild.ID))
-						{
-							<a asp-controller="Dashboard" asp-route-guildID="@guild.ID" asp-action="Index" >
-								<img src="@serverIconURL" height="100" width="100" alt="Server Icon" />
-								<br/>@guilds[i].Name
-							</a>
-						}
-						else
-						{
-							string inviteBotToServerURL = "https://discord.com/oauth2/authorize?" +
+					if (client == null) { throw new Exception("Client missing value!"); }
+
+					string serverIconURL = "https://cdn.discordapp.com/icons/" +
+						guild.ID +
+						'/' + guild.Icon,
+
+					inviteBotToServerURL = "https://discord.com/oauth2/authorize?" +
 								"client_id=" + HostConfig.Discord.ClientID + '&' +
 								"scope=bot&" +
 								"permissions=137439239200&" +
 								"guild_id=" + guild.ID;
 
-							<a href="@inviteBotToServerURL">
-								<img src="@serverIconURL" height="100" width="100" alt="Server Icon" class="unusedserver" />
-								<br/>@guilds[i].Name
-							</a>
-
+					<div>
+						@{
+							if (client.Guilds.ContainsKey((ulong)guild.ID))
+							{
+								<a asp-controller="Dashboard" asp-route-guildID="@guild.ID" asp-action="Index" >
+									<img src="@serverIconURL" height="100" width="100" alt="Server Icon" />
+									<br/>@guilds[i].Name
+								</a>
+							}
+							else
+							{
+								<a href="@inviteBotToServerURL" target="_blank">
+									<img src="@serverIconURL" height="100" width="100" alt="Server Icon" class="unusedserver" />
+									<br/>@guilds[i].Name
+								</a>
+							}
 						}
-					}
-				</div>
+					</div>
+				}
 			}
 		}
-	}
+	</div>
 </div>
-

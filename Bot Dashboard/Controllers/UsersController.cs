@@ -10,7 +10,7 @@ namespace Bot_Dashboard.Controllers
 	{
 		protected class ClientUser { public string? Access_Token { get; set; } }
 
-		protected class Guild
+		public class Guild
 		{
 			public long ID { get; set; }
 			public string? Name { get; set; }
@@ -21,14 +21,19 @@ namespace Bot_Dashboard.Controllers
 
 		public IActionResult Index()
 		{
-			return View();
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString("Discord.Session"))) { return RedirectToAction("Login", "OAuth2"); }
+			else { return View(); }
 		}
 
 		public IActionResult Guilds()
 		{
 			string? discordSession = HttpContext.Session.GetString("Discord.Session");
 
-			if (string.IsNullOrEmpty(discordSession)) { return RedirectToAction("Login", "OAuth2"); }
+			if (string.IsNullOrEmpty(discordSession))
+			{
+				Response.StatusCode = 403;
+				return RedirectToAction("Index", "Exception", new { id = 403 } );
+			}
 
 			ClientUser? user = JsonConvert.DeserializeObject<ClientUser>(discordSession);
 
@@ -63,7 +68,7 @@ namespace Bot_Dashboard.Controllers
 				{ guilds.Add(guild); }
 			}
 
-			ViewData["Guilds"] = JsonConvert.SerializeObject(guilds, Formatting.Indented);
+			ViewData["Guilds"] = guilds;
 
 			return View();
 		}

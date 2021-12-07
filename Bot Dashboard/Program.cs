@@ -34,11 +34,6 @@ app.Use(async (context, next) =>
 			context.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?url=\"" + url + "\"");
 			await next();
 			break;
-
-		case 403:
-			context.Request.Path = "/Exception/Forbidden";
-			await next();
-			break;
 	}
 });
 app.UseHttpsRedirection();

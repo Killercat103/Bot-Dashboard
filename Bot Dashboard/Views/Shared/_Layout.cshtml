@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="~/CSS/Main.css" />
 	<link rel="icon" type="image/png" href="~/Media/Images/Icons/NET_Core_Logo.png" />
 	<link rel="manifest" type="application/manifest+json" href="~/Manifest.webmanifest" />
+	@RenderSection("styles", false)
 
 </head>
 <body>
@@ -53,13 +54,14 @@
 
 			<a
 				class="@GetStyleIfCurrentPage(currentPage, "Invite", currentController, "Home")"
+				target="_blank"
 				asp-controller="Home"
 				asp-action="Invite"
 			>Invite</a>
 
 		</nav>
 		@{
-			string avatarURL;
+			string avatarURL = string.Empty;
 			if (ViewData["SignedIn"] != null)
 			{
 				avatarURL = "https://cdn.discordapp.com/avatars/" +
@@ -92,7 +94,8 @@
 	</main>
 
 	<footer>
-		Hello There!
+		<h3>Creators:</h3>
+		Killercat103
 	</footer>
 </body>
 </html>
