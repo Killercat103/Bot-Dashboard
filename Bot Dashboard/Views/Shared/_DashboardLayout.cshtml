@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="~/CSS/Dashboard.css" />
 	<link rel="icon" type="image/png" href="~/Media/Images/Icons/NET_Core_Logo.png" />
 	<link rel="manifest" type="application/manifest+json" href="~/Manifest.webmanifest" />
+	@RenderSection("styles", false)
 
 </head>
 <body>
@@ -54,6 +55,7 @@
 
 			<a
 				class="@GetStyleIfCurrentPage(currentPage, "Invite", currentController, "Home")"
+				target="_blank"
 				asp-controller="Home"
 				asp-action="Invite"
 			>Invite</a>
@@ -86,13 +88,20 @@
 		}
 	</header>
 
-	<main>
-		<div class="dashboardmenu"></div>
-		@RenderBody()
-	</main>
+	<div class="dashboard">
+		<nav>
+			<a asp-controller="Dashboard" asp-route-guildID="@ViewData["GuildID"]" asp-action="Index">Server</a>
+			<a asp-controller="Dashboard" asp-route-guildID="@ViewData["GuildID"]" asp-action="Embed">Embed</a>
+		</nav>
+
+		<main class="maincolumn">
+			@RenderBody()
+		</main>
+	</div>
 
 	<footer>
-		Hello There!
+		<h3>Creators:</h3>
+		Killercat103
 	</footer>
 </body>
 </html>
