@@ -25,5 +25,7 @@ namespace Bot_Dashboard.Controllers
 		public IActionResult Forbidden() { return View(); }
 
 		public IActionResult DiscordAuthFailed() { return View(); }
+		
+		public IActionResult TooManyRequests() { return View(); }
 	}
 }
