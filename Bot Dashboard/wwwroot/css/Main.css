@@ -1,7 +1,4 @@
-html
-{
-	height: 100%;
-}
+html { height: 100%; }
 
 
 body
@@ -14,6 +11,11 @@ body
 	margin: 0;
 }
 
+
+/* Highlighted text properties. */
+::selection { background: #50d84454; }
+
+
 header
 {
 	position: relative;
@@ -24,27 +26,26 @@ header
 	width: 100%;
 }
 
-nav
-{
+header > nav {
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 200%;
 	width: calc(100% - 150px);
 }
 
-nav > h1
+header > nav > h1
 {
 	background-color: #353535;
 	border: 0 solid #00000090;
 	border-bottom-width: 1px;
 	border-right-width: 1px;
 	margin: 0;
-	padding-top: 1px;
+	padding-top: 4px;
 	text-align: center;
 	width: 300px;
 }
 
-nav > a:link, nav > a:visited
+header > nav > a:link, nav > a:visited
 {
 	background-color: #353535;
 	border: 0 solid #00000090;
@@ -55,14 +56,14 @@ nav > a:link, nav > a:visited
 	text-decoration: none;
 }
 
-nav > a:hover
+header > nav > a:hover
 {
 	box-shadow: 0 0 10px 0 #000000;
 	color: #8080ff;
 	z-index: 1;
 }
 
-nav > a:active, .userprofile:active { color: #FFFACF; }
+header > nav > a:active, .userprofile:active { color: #FFFACF; }
 
 .userprofile:link, .userprofile:visited {
 	background-color: #353535;
@@ -87,6 +88,7 @@ nav > a:active, .userprofile:active { color: #FFFACF; }
 	color: #808080;
 }
 
+
 a:link { color: #3639bf; }
 
 a:visited { color: #62e19e; }
@@ -95,63 +97,20 @@ a:hover { color: #8080ff; }
 
 a:active { color: #fffacf; }
 
-main
+
+.maincolumn
 {
 	background-color: #202020;
 	box-shadow: 5px 5px 7px 0 #000000AA;
-	margin-bottom: 50px;
+	padding: 13px;
+	margin: 10px 10px 0 10px;
 }
+
 
 footer
 {
 	background-color: #101010;
 	box-shadow: 0 0 7px 2px #000000AA;
 	padding: 10px;
+	margin-top: 50px;
 }
-
-
-.frontpagebanner {
-	background: #060f19 url("/Media/Images/Banners/Wave Background - Starline (Freepik).webp") no-repeat 0 0 fixed;
-	background-position-y: bottom;
-	background-size: cover;
-	height: 500px;
-	width: 100%;
-}
-
-.frontpagebanner > h1
-{
-	font-size: 400%;
-	text-shadow: 1.5px 1.5px 1.5px #000000;
-	position: absolute;
-	left: 0;
-	margin: 150px auto 0 auto;
-	right: 0;
-	text-align: center;
-}
-
-
-.guildlist
-{
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.guildlist > div
-{
-	text-align: center;
-	height: 150px;
-	width: 120px;
-}
-
-.guildlist > div > a:link, .guildlist > div > a:visited
-{
-	color: #eeeeee;
-	text-decoration: none;
-}
-
-.guildlist > div > a > img
-{
-    border-radius: 50%;
-}
-
-.unusedserver { filter: grayscale(100%); }

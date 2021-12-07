@@ -1,0 +1,25 @@
+﻿.guildlist
+{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.guildlist > div
+{
+	text-align: center;
+	height: 150px;
+	width: 120px;
+}
+
+.guildlist > div > a:link, .guildlist > div > a:visited
+{
+	color: #eeeeee;
+	text-decoration: none;
+}
+
+.guildlist > div > a > img
+{
+	border-radius: 50%;
+}
+
+.unusedserver { filter: grayscale(100%); }
