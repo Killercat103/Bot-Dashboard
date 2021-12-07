@@ -5,7 +5,8 @@ namespace Bot_Dashboard
 {
 	public class HostConfig
 	{
-		public static string? HostURL { get; set; }
+		public static string LocalURL { get; set; } = "https://127.0.0.1:5000";
+		public static string HostName { get; set; } = "Bot Dashboard";
 
 		public static class Discord
 		{
@@ -24,7 +25,7 @@ namespace Bot_Dashboard
 	// Connecting to the Discord Bot.
 	public class BotStartup
 	{
-		public static async Task MainAsync()
+		public static async Task ConnectToDiscord()
 		{
 			DiscordClient? discord = new(new DiscordConfiguration()
 			{
@@ -35,12 +36,6 @@ namespace Bot_Dashboard
 			await discord.ConnectAsync();
 
 			DiscordConnection.Client = discord;
-
-			/* I'm gonna need this later probably.
-			DSharpPlus.Entities.DiscordGuild guild = await discord.GetGuildAsync(878193265424343060L);
-			DSharpPlus.Entities.DiscordChannel channel = guild.GetChannel(878340382319079475L);
-
-			await discord.SendMessageAsync(channel, "Hello world!"); */
 		}
 	}
 
@@ -57,18 +52,18 @@ namespace Bot_Dashboard
 			{
 				Console.WriteLine(message);
 				string? input;
-				do
-				{
-					input = Console.ReadLine();
-				}
-				while (String.IsNullOrEmpty(input));
+
+				do { input = Console.ReadLine(); }
+
+				while (string.IsNullOrEmpty(input));
+				
 				return input;
 			}
 
 			static string EncryptString(string value)
 			{
 				char[] valueCharArray = value.ToCharArray();
-				string encryptedString = "";
+				string encryptedString = string.Empty;
 				// Insecure encryption method.
 				for (int i = 0; i < valueCharArray.Length; ++i)
 				{
@@ -80,20 +75,25 @@ namespace Bot_Dashboard
 			}
 			if (RequestConfigParameter("\nWould you like to create a new configuration file? (Y/N)").ToLower() == "n")
 				Environment.Exit(-1);
+
 			using StreamWriter writer = File.CreateText("Config.toml");
 			TomlTable newHostConfig = new()
 			{
-				["HostURL"] = RequestConfigParameter("\nPlease insert application's host URL. (Example: https://0.0.0.0:443;http://0.0.0.0:80)"),
+				["HostName"] = RequestConfigParameter("\nPlease insert "),
+				["LocalURL"] = RequestConfigParameter("\nPlease insert application's locally hosted URL. (Example: https://0.0.0.0:443;http://0.0.0.0:80)"),
 				["Discord"] =
 					{
 						["ClientID"] = RequestConfigParameter("\nPlease insert Discord application's client ID"),
 						["EncryptedBotToken"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord Bot's token")),
-						["EncryptedClientSecret"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord application's client secret"))
+						["EncryptedClientSecret"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord application's client secret")),
+						["Administrators"] = "[]"
 					},
 			};
 
 			newHostConfig.WriteTo(writer);
 			writer.Flush();
+			Console.WriteLine("Created \"Config.toml\"!\n" +
+				"Some more options are available for manual edit. (Remember to delete the file if something goes wrong).");
 			return newHostConfig;
 		}
 
@@ -119,10 +119,10 @@ namespace Bot_Dashboard
 			}
 
 			string botToken = hostConfig["Discord"]["EncryptedBotToken"],
-				decryptedBotToken = "";
+				decryptedBotToken = string.Empty;
 			char[] botTokenCharArray = botToken.ToCharArray();
 			
-			// Insecure deencryption method.
+			// Insecure decryption method.
 			for (int i = 0; i < botTokenCharArray.Length; ++i)
 			{
 				for (int j = 1; j <= i; ++j)
@@ -131,7 +131,7 @@ namespace Bot_Dashboard
 			}
 
 			string clientSecret = hostConfig["Discord"]["EncryptedClientSecret"],
-				decryptedClientSecret = "";
+				decryptedClientSecret = string.Empty;
 			char[] clientSecretCharArray = clientSecret.ToCharArray();
 
 
@@ -142,15 +142,18 @@ namespace Bot_Dashboard
 				decryptedClientSecret += clientSecretCharArray[i];
 			}
 
-			HostConfig.HostURL = hostConfig["HostURL"];
+			IList<long> admins = new List<long>();
+			for (int i = 0; i < hostConfig["Discord"]["Administrators"].ChildrenCount; ++i)
+			{
+				admins.Add(hostConfig["Discord"]["Administrators"][i]);
+			}
+
+			HostConfig.LocalURL = hostConfig["LocalURL"];
+			HostConfig.HostName = hostConfig["HostName"];
 			HostConfig.Discord.ClientID = hostConfig["Discord"]["ClientID"];
 			HostConfig.Discord.BotToken = decryptedBotToken;
 			HostConfig.Discord.ClientSecret = decryptedClientSecret;
-			HostConfig.Discord.Admins = new long[1L];
-
-
-
-			BotStartup.MainAsync().GetAwaiter().GetResult();
+			HostConfig.Discord.Admins = admins.ToArray();
 
 			Configuration = configuration;
 		}
@@ -167,18 +170,28 @@ namespace Bot_Dashboard
 				options.Cookie.Name = "Discord.Session";
 				options.IdleTimeout = TimeSpan.FromMinutes(60);
 				options.Cookie.HttpOnly = true;
+				options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 			});
 		}
 
 		public void WebHost(ConfigureWebHostBuilder builder)
 		{
-			builder.UseUrls(hostConfig["HostURL"]);
+			if (HostConfig.LocalURL != null) { builder.UseUrls(HostConfig.LocalURL); }
 		}
+
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
 		{
 			app.UseSession();
 			app.UseAuthentication();
+			app.UseStaticFiles(new StaticFileOptions
+			{
+				FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+				Path.Combine(Directory.GetCurrentDirectory())),
+				RequestPath = "/wwwroot"
+			});
+
+			environment.ApplicationName = HostConfig.HostName;
 		}
 	}
 }

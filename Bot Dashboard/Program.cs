@@ -1,11 +1,10 @@
 using Bot_Dashboard;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
-using System;
 
 WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
 
 Startup? startup = new(builder.Configuration);
+
+BotStartup.ConnectToDiscord().GetAwaiter().GetResult();
 
 startup.WebHost(builder.WebHost);
 
@@ -26,12 +25,15 @@ if (!app.Environment.IsDevelopment())
 app.Use(async (context, next) =>
 {
 	await next();
-	if (context.Response.StatusCode == 404)
+
+	switch (context.Response.StatusCode)
 	{
-		string url = context.Request.Path;
-		context.Request.Path = "/Exception/URL404";
-		context.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?url=\"" + url + "\"");
-		await next();
+		case 404:
+			string url = context.Request.Path;
+			context.Request.Path = "/Exception/URL404";
+			context.Request.QueryString = new Microsoft.AspNetCore.Http.QueryString("?url=\"" + url + "\"");
+			await next();
+			break;
 	}
 });
 app.UseHttpsRedirection();
@@ -42,7 +44,15 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+	name: "dashboard",
+	pattern: "/Dashboard/{guildID}/{action=Index}",
+	defaults: new { controller = "Dashboard", action = "Index", }
+);
+
+app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+	pattern: "{controller=Home}/{action=Index}/{id?}",
+	defaults: new { controller = "Home", action = "Index", }
+);
 
 app.Run();

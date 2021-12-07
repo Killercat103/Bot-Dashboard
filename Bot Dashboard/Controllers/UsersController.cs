@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;
+using System.Net;
 
 namespace Bot_Dashboard.Controllers
 {
@@ -9,7 +10,7 @@ namespace Bot_Dashboard.Controllers
 	{
 		protected class ClientUser { public string? Access_Token { get; set; } }
 
-		protected class Guild
+		public class Guild
 		{
 			public long ID { get; set; }
 			public string? Name { get; set; }
@@ -20,14 +21,19 @@ namespace Bot_Dashboard.Controllers
 
 		public IActionResult Index()
 		{
-			return View();
+			if (string.IsNullOrEmpty(HttpContext.Session.GetString("Discord.Session"))) { return RedirectToAction("Login", "OAuth2"); }
+			else { return View(); }
 		}
 
 		public IActionResult Guilds()
 		{
 			string? discordSession = HttpContext.Session.GetString("Discord.Session");
 
-			if (string.IsNullOrEmpty(discordSession)) { return RedirectToAction("Login", "OAuth2"); }
+			if (string.IsNullOrEmpty(discordSession))
+			{
+				Response.StatusCode = 403;
+				return RedirectToAction("Index", "Exception", new { id = 403 } );
+			}
 
 			ClientUser? user = JsonConvert.DeserializeObject<ClientUser>(discordSession);
 
@@ -40,6 +46,13 @@ namespace Bot_Dashboard.Controllers
 			restClient.BaseUrl = new Uri("https://discord.com/api/v9/users/@me/guilds");
 			IRestResponse? response = restClient.Get(restRequest);
 
+			for (int i = 0; i < 5 && response.StatusCode == HttpStatusCode.TooManyRequests; ++i)
+			{
+				Thread.Sleep(i * 500);
+				response = restClient.Get(restRequest);
+			}
+			if (response.StatusCode == HttpStatusCode.TooManyRequests) { return StatusCode(429); }
+
 			IList<Guild>? allGuilds = JsonConvert.DeserializeObject<List<Guild>>(response.Content);
 
 			IList<Guild> guilds = new List<Guild>();
@@ -49,10 +62,13 @@ namespace Bot_Dashboard.Controllers
 			{
 				Guild? guild = allGuilds[i];
 
-				if (guild != null && ( guild.Owner == true || (guild.Permissions | 0x20L) == guild.Permissions )) { guilds.Add(guild); }
+				if (guild != null &&
+						( guild.Owner == true ||
+						(guild.Permissions | 0x20L) == guild.Permissions ))
+				{ guilds.Add(guild); }
 			}
 
-			ViewData["Guilds"] = JsonConvert.SerializeObject(guilds, Formatting.Indented);
+			ViewData["Guilds"] = guilds;
 
 			return View();
 		}

@@ -1,0 +1,50 @@
+﻿@using Bot_Dashboard.Controllers
+@{ ViewData["Title"] = "Embed"; }
+
+Currently under construction...<br/>
+
+ <form method="post">
+	<label for="message">Message:</label><br/>
+	<input type="text" id="message" name="message" /><br/>
+	<label for="title">Title:</label><br/>
+	<input type="text" id="title" name="title" /><br/>
+	<label for="description">Description:</label><br/>
+	<input type="text" id="description" name="description" /><br/>
+
+	@{
+
+
+		DSharpPlus.DiscordClient? client = DiscordConnection.Client;
+
+		if (client == null) { throw new Exception("No Discord connection"); }
+
+
+		DSharpPlus.Entities.DiscordGuild? guild;
+
+		guild = await client.GetGuildAsync((ulong?)ViewData["GuildID"] ?? 0UL);
+
+		IReadOnlyList<DSharpPlus.Entities.DiscordChannel> channels = await guild.GetChannelsAsync();
+	}
+
+
+	<br/>
+	<select name="channelID" id="channelID">
+		@{
+			foreach (DSharpPlus.Entities.DiscordChannel channel in channels)
+			{
+				DSharpPlus.Permissions channelPermissions = channel.PermissionsFor(await guild.GetMemberAsync(client.CurrentUser.Id));
+
+				if (channel.Type == DSharpPlus.ChannelType.Text &&
+					(channelPermissions |
+						DSharpPlus.Permissions.SendMessages)
+					== channelPermissions)
+				
+				{ <option value="@channel.Id">@channel.Name</option> }
+			}
+		}
+	</select>
+
+	<button type="submit" asp-controller="Dashboard" asp-action="Embed" asp-route-guildID="@ViewData["GuildID"]">Post</button>
+</form> 
+
+@ViewData["EmbedDummy"]

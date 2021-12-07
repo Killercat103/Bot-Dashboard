@@ -3,18 +3,105 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewData["Title"] - Bot Dashboard</title>
-	<meta name="description" content="Dashboard for using .NETBot on Discord.">
+	<title>@ViewData["Title"] | @HostConfig.HostName Dashboard</title>
+	<meta name="description" content="Dashboard for administrating .NETBot on Discord.">
 
-	<link rel="stylesheet" href="~/css/Main.css" />
+	<link rel="stylesheet" href="~/CSS/Main.css" />
+	<link rel="stylesheet" href="~/CSS/Dashboard.css" />
 	<link rel="icon" type="image/png" href="~/Media/Images/Icons/NET_Core_Logo.png" />
+	<link rel="manifest" type="application/manifest+json" href="~/Manifest.webmanifest" />
+	@RenderSection("styles", false)
+
 </head>
 <body>
-	<main>
-		@RenderBody()
-	</main>
+	<header>
+		<nav>
+			<h1>@ViewData["Title"]</h1>
+			@{
+				@functions {
+					string? GetStyleIfCurrentPage(string? currentPage,
+						string action,
+						string? currentController,
+						string controller)
+					{
+
+						if (currentPage == action &&
+						currentController == controller) { return "currentpage"; }
+						return null;
+					}
+				}
+
+				string? currentPage = ViewContext?.RouteData?.Values["action"]?.ToString(),
+					currentController = ViewContext?.RouteData?.Values["controller"]?.ToString();
+			}
+
+			<a
+				class="@GetStyleIfCurrentPage(currentPage, "Index", currentController, "Home")"
+				asp-controller="home"
+				asp-action="Index"
+			>Home</a>
+
+			<a
+				class="@GetStyleIfCurrentPage(currentPage, "Guilds", currentController, "Users")"
+				asp-controller="Users"
+				asp-action="Guilds"
+			>My Servers</a>
+			
+			<a
+				class="@GetStyleIfCurrentPage(currentPage, "Support", currentController, "Home")"
+				asp-controller="Home"
+				asp-action="Support"
+			>Support</a>
+
+			<a
+				class="@GetStyleIfCurrentPage(currentPage, "Invite", currentController, "Home")"
+				target="_blank"
+				asp-controller="Home"
+				asp-action="Invite"
+			>Invite</a>
+
+		</nav>
+		@{
+			string avatarURL;
+			if (ViewData["SignedIn"] != null)
+			{
+				avatarURL = "https://cdn.discordapp.com/avatars/" +
+					ViewData["User_ID"] +
+					'/' + ViewData["User_Avatar"];
+
+				<a class="userprofile"
+					asp-controller="Users"
+					asp-action="Index"
+					><img src="@avatarURL" height="40" width="40" alt="profile picture" />
+					<br/>@ViewData["Username"]
+				</a>
+			}
+			else
+			{
+				<a class="userprofile" asp-controller="Oauth2" asp-action="Login">
+					<img src="/Media/Images/Icons/StockUserAvatar.png" height="40" width="40" alt="profile picture" />
+					<br/>@ViewData["Username"]
+				</a>
+			}
+
+
+		}
+	</header>
+
+	<div class="dashboard">
+		<nav>
+			<a asp-controller="Dashboard" asp-route-guildID="@ViewData["GuildID"]" asp-action="Index">Server</a>
+			<a asp-controller="Dashboard" asp-route-guildID="@ViewData["GuildID"]" asp-action="Embed">Embed</a>
+		</nav>
+
+		<main class="maincolumn">
+			@RenderBody()
+		</main>
+	</div>
 
 	<footer>
+		<h3>Creators:</h3>
+		Killercat103
 	</footer>
 </body>
 </html>

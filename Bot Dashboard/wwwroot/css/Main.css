@@ -1,41 +1,51 @@
+html { height: 100%; }
+
+
 body
 {
 	background-color: #151518;
 	color: #eeeeee;
 	display: block;
 	font-family: sans-serif, "Times New Roman";
+	height: 100%;
 	margin: 0;
 }
 
+
+/* Highlighted text properties. */
+::selection { background: #50d84454; }
+
+
 header
 {
+	position: relative;
 	background-color: #282828;
 	box-shadow: 0 5px 7px 0 #000000AA;
 	display: flex;
-	margin-bottom: 35px;
 	text-shadow: 1.5px 1.5px 1.5px #000000;
+	width: 100%;
 }
 
-nav
-{
+header > nav {
 	display: flex;
 	flex-wrap: wrap;
 	font-size: 200%;
-	width: 90%;
+	width: calc(100% - 150px);
 }
 
-nav > h1
+header > nav > h1
 {
 	background-color: #353535;
 	border: 0 solid #00000090;
 	border-bottom-width: 1px;
 	border-right-width: 1px;
 	margin: 0;
-	padding: 1px 0 0 5px;
+	padding-top: 4px;
+	text-align: center;
 	width: 300px;
 }
 
-nav > a:link, nav > a:visited
+header > nav > a:link, nav > a:visited
 {
 	background-color: #353535;
 	border: 0 solid #00000090;
@@ -46,14 +56,14 @@ nav > a:link, nav > a:visited
 	text-decoration: none;
 }
 
-nav > a:hover
+header > nav > a:hover
 {
 	box-shadow: 0 0 10px 0 #000000;
 	color: #8080ff;
 	z-index: 1;
 }
 
-nav > a:active, .userprofile:active { color: #FFFACF; }
+header > nav > a:active, .userprofile:active { color: #FFFACF; }
 
 .userprofile:link, .userprofile:visited {
 	background-color: #353535;
@@ -64,7 +74,7 @@ nav > a:active, .userprofile:active { color: #FFFACF; }
 	padding: 3px;
 	text-align: center;
 	text-decoration: none;
-	width: 10%;
+	width: 150px;
 }
 
 .userprofile > img
@@ -78,6 +88,7 @@ nav > a:active, .userprofile:active { color: #FFFACF; }
 	color: #808080;
 }
 
+
 a:link { color: #3639bf; }
 
 a:visited { color: #62e19e; }
@@ -86,44 +97,20 @@ a:hover { color: #8080ff; }
 
 a:active { color: #fffacf; }
 
-main
+
+.maincolumn
 {
 	background-color: #202020;
 	box-shadow: 5px 5px 7px 0 #000000AA;
-	margin-bottom: 50px;
+	padding: 13px;
+	margin: 10px 10px 0 10px;
 }
+
 
 footer
 {
 	background-color: #101010;
 	box-shadow: 0 0 7px 2px #000000AA;
 	padding: 10px;
+	margin-top: 50px;
 }
-
-
-
-.guildlist
-{
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.guildlist > div
-{
-	text-align: center;
-	height: 150px;
-	width: 120px;
-}
-
-.guildlist > div > a:link, .guildlist > div > a:visited
-{
-	color: #eeeeee;
-	text-decoration: none;
-}
-
-.guildlist > div > a > img
-{
-    border-radius: 50%;
-}
-
-.unusedserver { filter: grayscale(100%); }
