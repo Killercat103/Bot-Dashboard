@@ -3,8 +3,9 @@ using Tommy;
 
 namespace Bot_Dashboard
 {
-	public class HostConfig
+	public static class HostConfig
 	{
+
 		public static string LocalURL { get; set; } = "https://127.0.0.1:5000";
 		public static string HostName { get; set; } = "Bot Dashboard";
 
@@ -86,7 +87,7 @@ namespace Bot_Dashboard
 						["ClientID"] = RequestConfigParameter("\nPlease insert Discord application's client ID"),
 						["EncryptedBotToken"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord Bot's token")),
 						["EncryptedClientSecret"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord application's client secret")),
-						["Administrators"] = "[]"
+						["Administrators"] = {}
 					},
 			};
 
@@ -143,9 +144,9 @@ namespace Bot_Dashboard
 			}
 
 			IList<long> admins = new List<long>();
-			for (int i = 0; i < hostConfig["Discord"]["Administrators"].ChildrenCount; ++i)
+			foreach (TomlNode node in hostConfig["Discord"]["Administrators"])
 			{
-				admins.Add(hostConfig["Discord"]["Administrators"][i]);
+				admins.Add(node);
 			}
 
 			HostConfig.LocalURL = hostConfig["LocalURL"];
