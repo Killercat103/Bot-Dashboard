@@ -87,7 +87,7 @@ namespace Bot_Dashboard
 						["ClientID"] = RequestConfigParameter("\nPlease insert Discord application's client ID"),
 						["EncryptedBotToken"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord Bot's token")),
 						["EncryptedClientSecret"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord application's client secret")),
-						["Administrators"] = new TomlNode[] {}
+						["Administrators"] = Array.Empty<TomlNode>()
 					},
 			};
 
