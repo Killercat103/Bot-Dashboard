@@ -67,7 +67,7 @@ namespace Bot_Dashboard.Controllers
 
 				if (
 					admins.Contains(user.ID) ||
-						guild.ID == user.ID &&
+						guild.ID == guildID &&
 						(guild.Permissions | 0x20L) == guild.Permissions ||
 							guild.Owner)
 				{
