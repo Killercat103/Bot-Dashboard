@@ -52,9 +52,7 @@ namespace Bot_Dashboard.Controllers
 
 
 			DiscordClient? client = DiscordConnection.Client;
-			long[]? admins = HostConfig.Discord.Admins;
-
-			if (admins == null) { admins = Array.Empty<long>(); }
+			long[] admins = HostConfig.Discord.Admins ?? Array.Empty<long>();
 
 			if (user == null) { return 401; }
 
@@ -65,12 +63,11 @@ namespace Bot_Dashboard.Controllers
 			{
 				Guild? guild = allGuilds[i];
 
-				if (guild == null || guild.ID != guildID) { continue; }
-
+				if (guild == null || !client.Guilds.ContainsKey((ulong)guild.ID)) { continue; }
 
 				if (
-					admins.Contains(user.ID) || 
-						client.Guilds.ContainsKey((ulong)guild.ID) &&
+					admins.Contains(user.ID) ||
+						guild.ID == user.ID &&
 						(guild.Permissions | 0x20L) == guild.Permissions ||
 							guild.Owner)
 				{
