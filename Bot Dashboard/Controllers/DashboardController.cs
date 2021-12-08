@@ -65,20 +65,23 @@ namespace Bot_Dashboard.Controllers
 			{
 				Guild? guild = allGuilds[i];
 
-				if (guild != null && guild.ID == guildID && client.Guilds.ContainsKey((ulong)guild.ID))
+				if (guild == null || guild.ID != guildID) { continue; }
+
+
+				if (
+					admins.Contains(user.ID) || 
+						client.Guilds.ContainsKey((ulong)guild.ID) &&
+						(guild.Permissions | 0x20L) == guild.Permissions ||
+							guild.Owner)
 				{
-					if ((guild.Permissions | 0x20L) == guild.Permissions ||
-						guild.Owner ||
-						admins.Contains(user.ID))
-					{
-						ViewData["GuildName"] = guild.Name;
-						return 200;
-					}
-					else
-					{
-						return 403;
-					}
+					ViewData["GuildName"] = guild.Name;
+					return 200;
 				}
+				else
+				{
+					return 403;
+				}
+				
 			}
 
 			return 404;
