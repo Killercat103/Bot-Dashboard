@@ -84,7 +84,7 @@ namespace Bot_Dashboard
 				["LocalURL"] = RequestConfigParameter("\nPlease insert application's locally hosted URL. (Example: https://0.0.0.0:443;http://0.0.0.0:80)"),
 				["Discord"] =
 					{
-						["ClientID"] = RequestConfigParameter("\nPlease insert Discord application's client ID"),
+						["ClientID"] = Convert.ToInt64(RequestConfigParameter("\nPlease insert Discord application's client ID")),
 						["EncryptedBotToken"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord Bot's token")),
 						["EncryptedClientSecret"] =  EncryptString(RequestConfigParameter("\nPlease insert Discord application's client secret")),
 						["Administrators"] = Array.Empty<TomlNode>()
